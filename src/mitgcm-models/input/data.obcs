@@ -1,0 +1,22 @@
+# Open-boundaries
+ &OBCS_PARM01
+ OBCSfixTopo=.FALSE.,
+ OB_singleJnorth=-1,
+ OB_singleJsouth=1,
+ useOBCSprescribe=.TRUE.,
+ useOBCSsponge=.FALSE.,
+ OBNvfile='./input/VVEL_bound.data',
+ OBSvfile='./input/VVEL_bound.data',
+ OBNtfile='./input/T_bound.data',
+ OBStfile='./input/T_bound.data',
+ OBCS_monitorFreq=15.E6,
+ OBCS_monSelect=2,
+ /
+
+# Orlanski parameters
+ &OBCS_PARM02
+ /
+
+# Sponge parameters
+ &OBCS_PARM03
+ /
