@@ -1,0 +1,4 @@
+.ipynb_checkpoints
+.vscode
+data/raw/2d-models/run*
+data/raw/3d-models/run*
