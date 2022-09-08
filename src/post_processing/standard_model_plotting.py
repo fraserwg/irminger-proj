@@ -9,9 +9,6 @@ from pathlib import Path
 
 logging.info('Importing third party python libraries')
 import numpy as np
-#import dask
-#from dask.distributed import Client
-#from dask_jobqueue import SLURMCluster
 import xarray as xr
 import matplotlib.pyplot as plt
 import matplotlib.path as mpath
@@ -20,13 +17,16 @@ from matplotlib.ticker import ScalarFormatter
 import matplotlib.font_manager as fm
 import cartopy.feature as cfeature
 import cartopy.crs as ccrs
-#from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
-
 import cmocean.cm as cmo
 import f90nml
 
 logging.info("Importing custom python libraries")
 import pvcalc
+
+plot_mlds = False
+plot_pv = False
+plot_ics = False
+plot_wmts = False
 
 logging.info('Setting paths')
 base_path = Path('/work/n01/n01/fwg/irminger-proj')
@@ -51,6 +51,9 @@ std_run = 32
 logging.info(f"Standard run = {std_run}")
 ds_std = ds.sel(run=std_run)
 
+logging.info("Setting plotting defaults")
+dpi = 600
+
 def prep_for_wmt(ds, grid, rhonil, talpha):
     ds['rhoTEND'] = - rhonil * talpha * ds['TOTTTEND']
     ds['bTEND'] = pvcalc.calculate_buoyancy(ds['rhoTEND'])
@@ -64,7 +67,8 @@ def prep_for_pv(ds):
     ds['rho'] = pvcalc.calculate_density(ds['RHOAnoma'], ds['rhoRef'])
     ds['b'] = pvcalc.calculate_buoyancy(ds['rho'])
 
-    ds['db_dx'], ds['db_dy'], ds['db_dz'] = pvcalc.calculate_grad_buoyancy(ds['b'], ds, grid)
+    grad_b = pvcalc.calculate_grad_buoyancy(ds['b'], ds, grid)
+    ds['db_dx'], ds['db_dy'], ds['db_dz'] = grad_b
     
     db_dz_mask = xr.where(grid.interp(ds['maskC'],
                                       ['Z'],
@@ -75,14 +79,14 @@ def prep_for_pv(ds):
 
     ds['db_dz'] = ds['db_dz'] * db_dz_mask
 
-    ds['zeta_x'], ds['zeta_y'], ds['zeta_z'] = pvcalc.calculate_curl_velocity(ds['UVEL'],
-                                                                          ds['VVEL'],
-                                                                          ds['WVEL'],
-                                                                          ds,
-                                                                          grid,no_slip_bottom,
-                                                                          no_slip_sides
-                                                                         )
+    curl_vel = pvcalc.calculate_curl_velocity(ds['UVEL'],
+                                              ds['VVEL'],
+                                              ds['WVEL'],
+                                              ds,
+                                              grid,no_slip_bottom,
+                                              no_slip_sides)
 
+    ds['zeta_x'], ds['zeta_y'], ds['zeta_z'] = curl_vel
     
     ds['NaNmaskC'] = xr.where(ds['maskC'] == 1, 1, np.NaN)
     
@@ -115,29 +119,13 @@ rhonil, talpha = data_nml['parm01']['rhonil'], data_nml['parm01']['talpha']
 ds_std = prep_for_wmt(ds_std, grid, rhonil, talpha)
 
 
-logging.info('Setting plotting defaults')
-# fonts
-fpath = Path('/System/Library/Fonts/Supplemental/PTSans.ttc')
-if fpath.exists():
-    font_prop = fm.FontProperties(fname=fpath)
-    plt.rcParams['font.family'] = font_prop.get_family()
-    plt.rcParams['font.sans-serif'] = [font_prop.get_name()]
 
-# font size
-plt.rc('xtick', labelsize='10')
-plt.rc('ytick', labelsize='10')
-plt.rc('text', usetex=False)
-plt.rcParams['axes.titlesize'] = 12
-
-# output
-dpi = 600
-cm = 1/2.54
 
 rho_levels = np.array([1026.92, 1026.98, 1027.05, 1027.1211])
 
 
-plot_pv = True
 if plot_pv:
+    logging.info("Plotting the potential vorticity")
     clim = 2e-9
     fig = plt.figure(figsize=[6, 4])
     gs = gridspec.GridSpec(2, 3, height_ratios=[14, 1])
@@ -220,9 +208,80 @@ if plot_pv:
     
     figure_name = f'run{std_run}PV.pdf'
     fig.savefig(figure_path / figure_name, dpi=dpi)
+
+
+plot_strat = True
+if plot_strat:
+    logging.info("Plotting the stratification")
+    clim = 1e-5
+    cmap = cmo.tarn
+    fig = plt.figure(figsize=[6, 4])
+    gs = gridspec.GridSpec(2, 3, height_ratios=[14, 1])
+    
+    ax0 = fig.add_subplot(gs[0, 0])
+    
+    cax0 = ax0.pcolormesh(ds_std['XG'] * 1e-3,
+                          -ds_std['Zl'],
+                          ds_std['db_dz'].squeeze().sel(time=np.timedelta64(7, 'D')),
+                          cmap=cmap, shading='nearest',
+                          vmin=-clim, vmax=clim, rasterized=True)
+
+    
+    ax1 = fig.add_subplot(gs[0, 1])
+    cax1 = ax1.pcolormesh(ds_std['XG'] * 1e-3,
+                          -ds_std['Zl'],
+                          ds_std['db_dz'].squeeze().sel(time=np.timedelta64(14, 'D')),
+                          cmap=cmap, shading='nearest',
+                          vmin=-clim, vmax=clim, rasterized=True)
     
 
-plot_ics = True
+    ax2 = fig.add_subplot(gs[0, 2])
+    cax2 = ax2.pcolormesh(ds_std['XG'] * 1e-3,
+                          -ds_std['Zl'],
+                          ds_std['db_dz'].squeeze().sel(time=np.timedelta64(21, 'D'), method='nearest'),
+                          cmap=cmap, shading='nearest',
+                          vmin=-clim, vmax=clim, rasterized=True)
+
+    ax0.set_ylim(250, 0)
+    ax1.set_ylim(250, 0)
+    ax2.set_ylim(250, 0)
+
+    ax0.set_facecolor('grey')
+    ax1.set_facecolor('grey')
+    ax2.set_facecolor('grey')
+
+    ax0.set_xlim(0, 100)
+    ax1.set_xlim(0, 100)
+    ax2.set_xlim(0, 100)
+
+    ax0.set_title('1 week')
+    ax1.set_title('2 weeks')
+    ax2.set_title('3 weeks')
+    
+    ax0.set_title('(a)', loc='left')
+    ax1.set_title('(b)', loc='left')
+    ax2.set_title('(c)', loc='left')
+
+    fig.suptitle(f'Stratification')
+
+    ax0.set_ylabel('Depth (m)')
+    ax1.set_xlabel('Longitude (km)')
+
+    ax1.set_yticklabels([])
+    ax2.set_yticklabels([])
+    
+    fmt = ScalarFormatter(useMathText=True)
+    fmt.set_powerlimits((0, 0))
+    cbax = fig.add_subplot(gs[1, :])
+    cb = fig.colorbar(cax0, cax=cbax, orientation='horizontal',
+                      label='$\partial_z b$ (s$^{-2}$)', format=fmt)
+
+    fig.tight_layout()
+    
+    figure_name = f'run{std_run}Strat.pdf'
+    fig.savefig(figure_path / figure_name, dpi=dpi)
+
+  
 if plot_ics:
     logging.info('Plotting initial conditions')
 
@@ -338,14 +397,12 @@ if plot_ics:
     fig.savefig(figure_path / "EnsembleICs.pdf", dpi=dpi)
 
 
-
-plot_wmts = True
 if plot_wmts:
-    wmt_path = processed_path / "wmt.zarr"
+    wmt_path = processed_path / "wmt_2.zarr"
     logging.info(f"Loading {wmt_path}")
     ds_wmts = xr.open_zarr(wmt_path)
     
-    ds_wmt_std = ds_wmts.sel(run=std_run)
+    ds_wmt_std = ds_wmts#.sel(run=std_run)
     
     fig, axs = plt.subplots(3, 1, figsize=(6, 8), sharex=True)
     
@@ -381,9 +438,7 @@ if plot_wmts:
     fig.tight_layout()
     fig.show()
     fig.savefig(figure_path / f"WMT{std_run}.pdf")
-    
-    
-plot_mlds = True
+
 if plot_mlds:
     mld_path = processed_path / 'mld.zarr'
     

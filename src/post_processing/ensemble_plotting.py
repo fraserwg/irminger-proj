@@ -1,6 +1,4 @@
 import logging
-from select import select
-from xml.sax import default_parser_list
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%d-%b-%y %H:%M:%S',
                     level=logging.INFO
@@ -13,8 +11,6 @@ logging.info('Importing third party python libraries')
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-from matplotlib.ticker import ScalarFormatter
 import matplotlib.font_manager as fm
 
 logging.info('Setting paths')
@@ -95,18 +91,18 @@ if delta_mld:
     ax.legend(title="Wind duration (days)")
     fig.savefig(figure_path / "DeltaMLD.pdf")
     
-vol_anom = False
+vol_anom = True
 if vol_anom:
     ds_ensemble = xr.open_zarr(ensemble_path)
     ds_wmt = xr.open_zarr(wmt_path).squeeze()
-    fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True, sharey=False)
+    fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True, sharey=True)
     axs = axs.flatten()
     
     for classs in ds_wmt["classs"]:
         for run in ds_wmt["run"]:
             marker, colour = select_marker(ds_ensemble["wind_duration"].sel(run=run))
             
-            axs[classs].scatter(-ds_ensemble["wind_stress"].sel(run=run),
+            axs[classs].scatter(-ds_ensemble["wind_stress"].sel(run=run) * 1e-3,
                                 ds_wmt["volANOM"].isel(time=-1).sel(run=run,
                                                                     classs=classs),
                                 marker=marker,
@@ -114,6 +110,7 @@ if vol_anom:
 
     for i in range(5):
         axs[i].set_title(f"Class {i}")
+        axs[i].ticklabel_format(axis="y", style="sci", scilimits=(6, 6), useMathText=True)
     
     ax=axs[5]    
     ax.scatter(None, None, marker="D", color="black", label=0)
@@ -124,40 +121,45 @@ if vol_anom:
     ax.axis("off")
     ax.legend(title="Wind duration (days)", loc="center")
 
-    axs[2].set_ylabel("$\\Delta$V (m$^{3}$)")
+    axs[2].set_ylabel("$\\Delta$V (m$^{3}\,$km$^{-1}$)")
     axs[4].set_xlabel("Wind stress (N$\\,$m$^{-2}$)")
 
     fig.suptitle("Volume anomaly")
     fig.tight_layout()
     
-    fig.savefig(figure_path / "EnsembelVolAnom.pdf")
+    fig.savefig(figure_path / "EnsembleVolAnom.pdf")
     
 vol_tend = True
 if vol_tend:
     ds_ensemble = xr.open_zarr(ensemble_path)
     ds_wmt = xr.open_zarr(wmt_path).squeeze()
-    fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True, sharey=False)
+    fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True, sharey=True)
     axs = axs.flatten()
     
-    da_voltend_max = ds_wmt["volTEND"].max("time")
-    da_voltend_min = ds_wmt["volTEND"].min("time")
-    da_voltend_abs_max = xr.where(da_voltend_max > abs(da_voltend_min), 
-                                  da_voltend_max,
-                                  da_voltend_min).compute()
+    # We convert to Sv / km here too
+    da_voltend_mn = ds_wmt["volTEND"].mean("time").compute() * 1e-6 * 1e3
+    da_voltend_max = ds_wmt["volTEND"].max("time").compute() * 1e-6 * 1e3 - da_voltend_mn
+    da_voltend_min = da_voltend_mn - ds_wmt["volTEND"].min("time").compute() * 1e-6 * 1e3
     
     for classs in ds_wmt["classs"]:
         for run in ds_wmt["run"]:
             marker, colour = select_marker(ds_ensemble["wind_duration"].sel(run=run))
             
-            axs[classs].scatter(-ds_ensemble["wind_stress"].sel(run=run),
-                                da_voltend_abs_max.sel(run=run,
-                                                       classs=classs) * 1e-6 * 1e3,
+            lower_err = da_voltend_min.sel(run=run, classs=classs).values
+            upper_err = da_voltend_max.sel(run=run, classs=classs).values
+            
+            axs[classs].errorbar(-ds_ensemble["wind_stress"].sel(run=run),
+                                da_voltend_mn.sel(run=run,
+                                                  classs=classs),
+                                yerr=np.row_stack([lower_err, upper_err]),
+                                capsize=6,
                                 marker=marker,
                                 color=colour)
 
 
     for i in range(5):
         axs[i].set_title(f"Class {i}")
+        axs[i].set_yscale("symlog", linthresh=0.0015)
     
     ax=axs[5]    
     ax.scatter(None, None, marker="D", color="black", label=0)
@@ -168,7 +170,7 @@ if vol_tend:
     ax.axis("off")
     ax.legend(title="Wind duration (days)", loc="center")
 
-    axs[2].set_ylabel("Peak V_{tend} (Sv$\\,$km$^{-1}$)")
+    axs[2].set_ylabel("Peak $V_{tend}$ (Sv$\\,$km$^{-1}$)")
     axs[4].set_xlabel("Wind stress (N$\\,$m$^{-2}$)")
 
     fig.suptitle("Peak Volume tendencies")
