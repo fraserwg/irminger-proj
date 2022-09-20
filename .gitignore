@@ -7,3 +7,11 @@ irminger-proj-jl
 irminger-proj
 *.out
 */__pycache__
+**/*_hybrid
+**/.tmp
+**/*.ipynb
+data/*
+figures/*
+**/presentation*
+**/*3d*
+**/*3D*
