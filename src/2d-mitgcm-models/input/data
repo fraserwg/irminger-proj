@@ -30,6 +30,8 @@
  diffK4S=0.,
  diffKrS=0.,
 
+ nonHydrostatic=.TRUE.,
+
  no_slip_bottom=.FALSE.,
  no_slip_sides=.FALSE.,
 
@@ -52,11 +54,11 @@
 # Time stepping parameters
  &PARM03
  niter0=0,
- nTimeSteps=40320,
- deltaT=60.,
+ nTimeSteps=10,
+ deltaT=2.,
  dumpFreq=1.E7,
- pChkptFreq=1.E7,
- chkptFreq=2.4192E6,
+ pChkptFreq=20,
+ chkptFreq=20,
  writePickupAtEnd=.TRUE.,
  /
 
@@ -74,5 +76,5 @@
  uVelInitFile='./input/UVEL.data',
  vVelInitFile='./input/VVEL.data',
  hydrogThetaFile='./input/T_init.data',
- the_run_name='Irminger2d',
+ the_run_name='2DIrminger25m',
  /

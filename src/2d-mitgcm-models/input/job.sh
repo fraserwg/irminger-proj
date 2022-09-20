@@ -1,21 +1,22 @@
 #!/bin/bash
 # Slurm job options (job-name, compute nodes, job time)
-#SBATCH --job-name=Irminger1
-#SBATCH --time=03:00:00
-# #SBATCH --time=00:19:00
-#SBATCH --nodes=1
-#SBATCH --tasks-per-node=120
+#SBATCH --job-name=2DIrminger25m
+# #SBATCH --time=48:00:00
+#SBATCH --time=00:19:00
+#SBATCH --nodes=16
+#SBATCH --tasks-per-node=75
 #SBATCH --cpus-per-task=1
 
-# #SBATCH --qos=short
-# #SBATCH --reservation=shortqos
-#SBATCH --qos=standard
+#SBATCH --qos=short
+#SBATCH --reservation=shortqos
+# #SBATCH --qos=standard
 
-#SBATCH --account=n01-SiAMOC
+#SBATCH --account=n01-GEOM
 #SBATCH --partition=standard
 
 # Setup the job environment (this module needs to be loaded before any other modules)
-module load PrgEnv-gnu
+module purge
+module load PrgEnv-cray
 
 # Set the number of threads to 1
 #   This prevents any threaded system libraries from automatically

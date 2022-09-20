@@ -19,13 +19,13 @@
  &DIAGNOSTICS_LIST
   
   filename(1) = 'ZLevelVars',
-  fields(1:3,1) = 'UVEL    ','VVEL    ','RHOAnoma',
-  frequency(1) = -43200,
+  fields(1:4,1) = 'UVEL    ','VVEL    ','RHOAnoma','TOTTTEND',
+  frequency(1) = -10800,
   timePhase(1) = 0,
 
   filename(2) = 'IntLevelVars',
   fields(1, 2) = 'WVEL    ',
-  frequency(2) = -43200,
+  frequency(2) = -10800,
   timePhase(2) = 0,
  /
 

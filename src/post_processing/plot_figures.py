@@ -14,7 +14,7 @@ import xarray as xr
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.patches import Rectangle
-from matplotlib import colors, rc
+from matplotlib import font_manager as fm
 import cartopy.feature as cfeature
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -36,23 +36,21 @@ figure_path = base_path / 'figures'
 
 
 logging.info('Setting plotting defaults')
-SMALL_SIZE = 8
-MEDIUM_SIZE = 8
-BIGGER_SIZE = 8
-rc('font',**{'family':'sans-serif','sans-serif':['Arial']})
-plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+fpath = Path('/home/n01/n01/fwg/.local/share/fonts/PTSans-Regular.ttf')
+assert fpath.exists()
+font_prop = fm.FontProperties(fname=fpath)
+plt.rcParams['font.family'] = font_prop.get_family()
+plt.rcParams['font.sans-serif'] = [font_prop.get_name()]
 
-cm = 1/2.54
-dpi = 300
+# font size
+plt.rc('xtick', labelsize='8')
+plt.rc('ytick', labelsize='8')
+plt.rc('text', usetex=False)
+plt.rcParams['axes.titlesize'] = 10
 
-
-text_width = 5.5  # in inches
+# output
+dpi = 600
+text_width = 6
 
 if figure1:
     logging.info('Plotting initial and boundary conditions')

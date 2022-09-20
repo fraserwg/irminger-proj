@@ -1,6 +1,0 @@
- &PACKAGES
- useOBCS=.TRUE.,
- useMNC=.FALSE.,
- useDiagnostics=.TRUE.,
- useRBCS=.TRUE.,
- /

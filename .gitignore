@@ -4,5 +4,6 @@ data/raw/2d-models/run*
 data/raw/3d-models/run*
 src/*/build*
 irminger-proj-jl
+irminger-proj
 *.out
 */__pycache__
