@@ -26,11 +26,11 @@ import f90nml
 logging.info("Importing custom python libraries")
 import pvcalc
 
-plot_mlds = False
-plot_pv = False
-plot_ics = False
-plot_strat = False
-plot_classes = False
+plot_mlds = True
+plot_pv = True
+plot_ics = True
+plot_strat = True
+plot_classes = True
 
 logging.info('Setting paths')
 base_path = Path('/work/n01/n01/fwg/irminger-proj')
@@ -64,11 +64,13 @@ plt.rcParams['font.family'] = font_prop.get_family()
 plt.rcParams['font.sans-serif'] = [font_prop.get_name()]
 
 # font size
+mpl.use("pgf")
 plt.rc('xtick', labelsize='8')
 plt.rc('ytick', labelsize='8')
-plt.rc('text', usetex=False)
 plt.rcParams['axes.titlesize'] = 10
-
+plt.rcParams["text.latex.preamble"] = "\\usepackage{euler} \\usepackage{paratype}  \\usepackage{mathfont} \\mathfont[digits]{PT Sans}"
+plt.rcParams["pgf.preamble"] = plt.rcParams["text.latex.preamble"]
+plt.rc('text', usetex=False)
 # output
 dpi = 600
 text_width = 6
@@ -227,7 +229,8 @@ if plot_pv:
     fmt.set_powerlimits((0, 0))
     cbax = fig.add_subplot(gs[1, :])
     cb = fig.colorbar(cax0, cax=cbax, orientation='horizontal',
-                      label='$Q$ (s$^{-3}$)', format=fmt)
+                      format=fmt)
+    cb.set_label("$Q$ (s$^{-3}$)", usetex=True)
 
     fig.tight_layout()
     
@@ -316,7 +319,8 @@ if plot_strat:
     fmt.set_powerlimits((0, 0))
     cbax = fig.add_subplot(gs[1, :])
     cb = fig.colorbar(cax0, cax=cbax, orientation='horizontal',
-                      label='$\partial_z b$ (s$^{-2}$)', format=fmt)
+                      format=fmt)
+    cb.set_label("$\partial_z b$ (s$^{-2}$)", usetex=True)
 
     fig.tight_layout()
     
@@ -415,8 +419,8 @@ if plot_ics:
     #gl.xlabel_style = {'size': 15, 'color': 'gray'}
     #gl.xlabel_style = {'color': 'red', 'weight': 'bold'}
     
-    ax1.set_title("The Sub-Polar Atlantic")
-    ax1.set_title("(a)", loc='left')
+    ax1.set_title("(a)    The Sub-Polar North Atlantic")
+    #ax1.set_title("(a)", loc='left')
     cbax1 = fig.add_subplot(gs[1, 0])
     cb1 = plt.colorbar(cax_bathy,
                        cax=cbax1,
@@ -500,7 +504,7 @@ if plot_mlds:
     tau = stress * np.exp(-(t - 10.5 * days)**2 / 2 / sigma **2)
     
     axs[0].plot(t / days, tau, c='k')
-    axs[0].set_ylabel("$\\tau_y$ (N$\,$m$^{-2}$)")
+    axs[0].set_ylabel("$\\tau_y$ (N$\,$m$^{-2}$)", usetex=True)
 
     
     axs[1].invert_yaxis()
@@ -538,11 +542,11 @@ if plot_mlds:
         
         axs[2].ticklabel_format(axis="y", style="sci", scilimits=(0, 0), useMathText=True)
         
-    axs[2].set_ylabel("$\Delta \mathcal{V}$ ($\\times$10$^{9}$ m$^3\,$km$^{-1}$)")
+    axs[2].set_ylabel("$\Delta \mathcal{V}$ ($\\times$10$^{9}$ m$^3\,$km$^{-1}$)", usetex=True)
     
     fig.legend()
 
-    axs[3].set_ylabel("$\partial_t \mathcal{V}$ ($\\times$10$^{-2}$ Sv$\,$km$^{-1}$)")
+    axs[3].set_ylabel("$\partial_t \mathcal{V}$ ($\\times$10$^{-2}$ Sv$\,$km$^{-1}$)", usetex=True)
     axs[3].set_xlabel("Time (days)")
     axs[3].set_title("Smoothed formation rate")
     axs[3].ticklabel_format(axis="y", style="sci", scilimits=(0, 0), useMathText=True)
