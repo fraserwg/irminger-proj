@@ -638,3 +638,85 @@ if plot_classes:
     fig.tight_layout()
     
     fig.savefig(figure_path / "WaterMassClass.pdf")
+    
+plot_inst_region = True
+if plot_inst_region:
+    ds_std["time"] = ds_std["time"].astype("float32") * 1e-9
+
+    unstable_strat = xr.where(ds_std["db_dz"] < 0, 1, 0).sum("XC").transpose('Zl', 'time', ...)
+
+    unstable_strat = unstable_strat.compute()
+
+    unstable_pv = xr.where(ds_std["Q"] < 0, 1, 0).sum("XG").transpose("Zl", "time", ...)
+
+    unstable_pv = unstable_pv.compute()
+
+    fig = plt.figure(figsize=(4, 4))
+
+
+    gs = gridspec.GridSpec(2, 2,
+                        width_ratios=[1, 1],
+                        height_ratios=[14, 1]
+                        )
+
+    ax_xlab = fig.add_subplot(gs[0, :])
+    axs = [fig.add_subplot(gs[0, 0]),
+        fig.add_subplot(gs[0, 1]),
+        fig.add_subplot(gs[1, :])]
+
+
+
+    cax = axs[0].pcolormesh(unstable_strat["time"] / 24 / 60 / 60,
+                    -unstable_strat["Zl"],
+                    unstable_strat.squeeze(),
+                    vmin=0,
+                    vmax=5000,
+                    cmap=cmo.amp,
+                    rasterized=True)
+
+    axs[1].pcolormesh(unstable_pv["time"] / 24 / 60 / 60,
+                    -unstable_pv["Zl"],
+                    unstable_pv.squeeze(),
+                    vmin=0,
+                    vmax=5000,
+                    cmap=cmo.amp,
+                    rasterized=True)
+
+    axs[1].set_yticklabels([])
+    axs[0].invert_yaxis()
+    axs[1].invert_yaxis()
+
+    ylim = 300
+    axs[0].set_ylim(ylim, 0)
+    axs[1].set_ylim(ylim, 0)
+
+    ax_xlab.set_xlabel("Time (days)", labelpad=18)
+    ax_xlab.set_yticks([])
+    ax_xlab.set_xticks([])
+
+    ax_xlab.spines['top'].set_visible(False)
+    ax_xlab.spines['right'].set_visible(False)
+    ax_xlab.spines['bottom'].set_visible(False)
+    ax_xlab.spines['left'].set_visible(False)
+
+    axs[0].set_title("$\\partial_z b < 0$", usetex=True)
+    axs[1].set_title("$fQ < 0$", usetex=True)
+
+    axs[0].set_title("(a)", loc="left")
+    axs[1].set_title("(b)", loc="left")
+
+
+    fig.suptitle("Regions of instability")
+
+    axs[0].set_ylabel("Depth (m)")
+
+    fmt = ScalarFormatter(useMathText=True)
+    fmt.set_powerlimits((0, 0))
+    cb = fig.colorbar(cax, cax=axs[2],
+                    orientation="horizontal",
+                    label="Number of grid points",
+                    format=fmt)
+
+    fig.tight_layout()
+
+    fig.savefig(figure_path / "StandardInstabilityRegion.pdf", dpi=dpi)
