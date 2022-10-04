@@ -1,0 +1,16 @@
+&EXF_NML_01
+readStressOnCgrid=.TRUE.,
+&
+
+&EXF_NML_02
+ vstressfile='./input/merid_wind_stress.data',
+ vstressperiod=5400.,
+ vstressstartdate1=20000101,
+ vstressstartdate2=000000,
+&
+
+&EXF_NML_03
+&
+
+&EXF_NML_04
+&
