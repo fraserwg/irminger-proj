@@ -26,34 +26,62 @@ import f90nml
 logging.info("Importing custom python libraries")
 import pvcalc
 
-plot_mlds = True
-plot_pv = True
+plot_mlds = False
+plot_pv = False
 plot_ics = True
-plot_strat = True
-plot_classes = True
+plot_strat = False
+plot_classes = False
 
 logging.info('Setting paths')
 base_path = Path('/work/n01/n01/fwg/irminger-proj')
 raw_path = base_path / 'data/raw'
 interim_path = base_path / 'data/interim'
 processed_path = base_path / 'data/processed'
-figure_path = base_path / 'figures'
+figure_path = base_path / 'figures/200m'
 
-logging.info("Opening ensemble")
-run_path = interim_path / "ensemble.zarr"
-assert run_path.exists()
-ds = xr.open_zarr(run_path)
+if False:
+    logging.info("Opening ensemble")
+    run_path = interim_path / "ensemble.zarr"
+    assert run_path.exists()
+    ds = xr.open_zarr(run_path)
 
-data_nml = f90nml.read(raw_path / '2d-models/input_data_files_a/data')
-delta_t = data_nml['parm03']['deltat']
-f0 = ds.attrs['f0']
-beta = ds.attrs['beta']
-no_slip_bottom = ds.attrs['no_slip_bottom']
-no_slip_sides = ds.attrs['no_slip_sides']
+    data_nml = f90nml.read(raw_path / '2d-models/input_data_files_a/data')
+    delta_t = data_nml['parm03']['deltat']
+    f0 = ds.attrs['f0']
+    beta = ds.attrs['beta']
+    no_slip_bottom = ds.attrs['no_slip_bottom']
+    no_slip_sides = ds.attrs['no_slip_sides']
 
-std_run = 32
-logging.info(f"Standard run = {std_run}")
-ds_std = ds.sel(run=std_run)
+    std_run = 32
+    logging.info(f"Standard run = {std_run}")
+    ds_std = ds.sel(run=std_run)
+
+else:
+    logging.info("Opening 200 m test")
+    
+    run_path = raw_path / "2d-models-200m/standard"
+    
+    data_nml = f90nml.read(run_path /"data")
+    delta_t = data_nml['parm03']['deltat']
+    f0 = data_nml['parm01']['f0']
+    beta = data_nml['parm01']['beta']
+    no_slip_bottom = data_nml['parm01']['no_slip_bottom']
+    no_slip_sides = data_nml['parm01']['no_slip_sides']
+    
+    from xmitgcm import open_mdsdataset
+    ds_std = open_mdsdataset(run_path,
+                            prefix=['ZLevelVars', 'IntLevelVars'],
+                            delta_t=delta_t,
+                            geometry='cartesian',
+                            #chunks=300
+                            )
+
+    ds_std.attrs['f0'] = f0
+    ds_std.attrs['beta'] = beta
+    ds_std.attrs['no_slip_bottom'] = no_slip_bottom
+    ds_std.attrs['no_slip_sides'] = no_slip_sides
+    
+    std_run = "200 m"
 
 logging.info("Setting plotting defaults")
 logging.info('Setting plotting defaults')
@@ -445,13 +473,18 @@ if plot_ics:
     cmap = mpl.colors.LinearSegmentedColormap.from_list('Custom cmap', ["C1", "C2", "C3", "C4", "C5"], 5)
     
     
-    ax2.contour(ds_init['XC'] * 1e-3,
+    CS = ax2.contour(ds_init['XC'] * 1e-3,
                 -ds_init['Z'],
                 ds_init['rho'] * ds_init['NaNmaskC'],
                 levels=rho_levels,
                 colors=["C1", "C2", "C3", "C4"],
                 linewidths=2)
     
+    def fmt(x):
+        sigma = x - 1000
+        return rf"{sigma:.2f}" if plt.rcParams["text.usetex"] else f"{sigma:.2f}"
+    
+    ax2.clabel(CS, CS.levels, inline=True, fmt=fmt, fontsize=10)
     cbax = fig.add_subplot(gs[1, 1])
     cb = plt.colorbar(cax,
                       cax=cbax,
