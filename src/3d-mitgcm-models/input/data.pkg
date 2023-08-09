@@ -1,0 +1,6 @@
+ &PACKAGES
+ useMNC=.FALSE.,
+ useDiagnostics=.TRUE.,
+ useEXF=.TRUE.,
+ useCAL=.TRUE.,
+ /
