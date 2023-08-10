@@ -9,7 +9,6 @@ irminger-proj
 */__pycache__
 **/*_hybrid
 **/.tmp
-**/*.ipynb
 data/*
 figures/*
 **/presentation*
