@@ -26,17 +26,11 @@ This folder has scripts for post processing the data. It contains the following 
 - `ERA5.ipynb`: a notebook where we estimate the transformation induced by down-front wind events over the course of a season
 - `figure-6-7.ipynb`: a notebook where we create figures 6 and 7 as used in the paper
 - `mld_calculations.py`: a script to calculate the change in mixed layer depth for the ensemble from the zarr
-- `paper_figures.ipynb`: I don't think this is relevant anymore and it may be deleted
-- `postprocess_3d.ipynb`: Might git rm this
-- `presentation_plots.py`: Also might git rm this
-- `reference_model_test.ipynb`: will probably git rm this. Currently has some old plots from the 3D model in.
-- `scaling.ipynb`: calculate the MLD power law. Might git rm this though as transformation-fits has everything we need
-- `standard_model_plotting.py`:
+- `standard_model_plotting.py`: where we did the standard plots used in my thesis
 - `tau_int-sketch.ipynb`: notebook for schematic of integrated wind stress in short vs long wind events.
 - `transformation-fits.ipynb`: calcuate the MLD power law and WMT scalings
-- `undestanding_mld.ipynb`: will git rm
-- `wmt_calculations.ipynb`: where we plot some WMT calcs. Should git mv
 - `wmt_calculations.py`: where we do the WMT calcs
+- `wmt_exploration.ipynb`: where we plot some WMT calcs and do some eploring
 - `wmt-3d.ipynb`: Actually maybe this is where we do the WMT calcs? It's where we do a lot of the plotting for the paper.
 
 
