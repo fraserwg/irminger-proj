@@ -1,3 +1,9 @@
+"""combine_ensemble.py
+
+This script is for combining the data from the individual runs in the ensemble
+in to a single zarr file, with a "run dimension" 
+"""
+
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
@@ -134,24 +140,6 @@ if __name__ == "__main__":
     
     enc = create_encoding_for_ds(ds_interim, 9)
 
-    # check rechunking is still needed
-    #xchunk = ds_interim.dims['XC']
-    #ychunk = ds_interim.dims['YC']
-    #zchunk = ds_interim.dims['Z']
-    #tchunk = ds_interim.dims['time']
-    
-    # logging.info("Rechunking")
-    # ds_interim = ds_interim.chunk({'XC': xchunk,
-    #                                'XG': xchunk,
-    #                                'YC': ychunk,
-    #                                'YG': ychunk,
-    #                                'Z': zchunk,
-    #                                'Zu': zchunk,
-    #                                'Zl': zchunk,
-    #                                'Zp1': zchunk + 1,
-    #                                'time': tchunk,
-    #                                'run': 1})
-    
     out_path = interim_path / "ensemble.zarr"
     logging.info(f"Saving to {out_path}")
     ds_interim.to_zarr(out_path, encoding=enc)
