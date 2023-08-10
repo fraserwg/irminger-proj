@@ -1,3 +1,46 @@
 # irminger-proj
 
-Repository containing codes used to generate figures and data for chapter 5 of my thesis.
+## Licence
+This code is published under a BSD-3-C licence. Although you're very free to do what you like with the code, please acknowledge the code appropriately if you use it in your own work; and an email saying that you've used it would be appreciated. Citations for works which use this code can be found at the end of this readme.
+
+The MITgcm setups may be useful; however, the post processing code is quite messy. It's included for completeness and if performing similar studies you may be best of looking at it to see how certain analyses are implemented rather than trying to use it directly.
+
+## Directory structure
+The `src` directory contains code for:
+- A 2D and 3D model MITgcm model
+- Generating input files for the model
+- Analysing the model
+
+### 2d-mitgcm-models \& 3d-mitgcm-moodels
+Both these folders have a standard MITgcm type model directory. You'll need to obtain the MITgcm code (I use checkpoint68i) and build the model using the mods in the directories starting with `code` and corresponding to the model you want (2D 25m, 2D 200m or 3D 200m). You can then use the namelists in the input folders to run the model with your executable. You will need to generate initial conditions files first, however.
+
+### initial_condition_generation
+This folder has a notebook for generating ICs for the 2D and 3D models. They're fairly self explanatory.
+
+### post_processing
+This folder has scripts for post processing the data. It contains the following python scripts and notebooks:
+- `combine_ensemble.py`: combines the raw data from the ensemble runs into a single zarr dataset
+- `compress-3d.ipynb`: compresses the raw data from the 3D run into a zarr dataset
+- `egu-figures.ipynb`: a notebook where I make some figures I used in my 2023 EGU presentation
+- `ensemble_plotting.py`: a script which creates the ensemble plots that appear in my thesis
+- `ERA5.ipynb`: a notebook where we estimate the transformation induced by down-front wind events over the course of a season
+- `figure-6-7.ipynb`: a notebook where we create figures 6 and 7 as used in the paper
+- `mld_calculations.py`: a script to calculate the change in mixed layer depth for the ensemble from the zarr
+- `paper_figures.ipynb`: I don't think this is relevant anymore and it may be deleted
+- `postprocess_3d.ipynb`: Might git rm this
+- `presentation_plots.py`: Also might git rm this
+- `reference_model_test.ipynb`: will probably git rm this. Currently has some old plots from the 3D model in.
+- `scaling.ipynb`: calculate the MLD power law. Might git rm this though as transformation-fits has everything we need
+- `standard_model_plotting.py`:
+- `tau_int-sketch.ipynb`: notebook for schematic of integrated wind stress in short vs long wind events.
+- `transformation-fits.ipynb`: calcuate the MLD power law and WMT scalings
+- `undestanding_mld.ipynb`: will git rm
+- `wmt_calculations.ipynb`: where we plot some WMT calcs. Should git mv
+- `wmt_calculations.py`: where we do the WMT calcs
+- `wmt-3d.ipynb`: Actually maybe this is where we do the WMT calcs? It's where we do a lot of the plotting for the paper.
+
+
+## Related publications
+Goldsworth, Fraser William. 2022. ‘Symmetric Instability in the Atlantic Meridional Overturning Circulation’. Oxford: University of Oxford. https://doi.org/10.5287/ora-xogpmrvzd.
+
+Goldsworth, F.W., Johnson, H.L., Marshall, D.P., Le Bras, I.A. 2023. ‘Saturation of destratifying and restratifying instabilities during down front wind events: a case study in the Irminger Sea’. Submitted: JGR Oceans.

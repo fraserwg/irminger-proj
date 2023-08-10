@@ -26,7 +26,7 @@ cycler==0.11.0
 dask==2022.9.0
 dask-jobqueue==0.7.4
 dask-labextension==5.3.0
-debugpy==1.6.2
+# debugpy==1.6.2
 decorator==5.1.1
 defusedxml==0.7.1
 distributed==2022.9.0
@@ -34,45 +34,45 @@ entrypoints==0.4
 executing==0.8.3
 f90nml==1.4.3
 fasteners==0.17.3
-fastjsonschema==2.15.3
+# fastjsonschema==2.15.3
 fonttools==4.34.4
 frozenlist==1.3.0
 fsspec==2022.5.0
 future==0.18.2
 gitdb==4.0.9
 GitPython==3.1.27
-graphviz==0.20.1
+# graphviz==0.20.1
 gsw==3.4.0
 h5netcdf==1.0.1
 h5py==3.7.0
 HeapDict==1.0.1
 idna==3.3
-importlib-metadata==4.12.0
+# importlib-metadata==4.12.0
 importlib-resources==5.8.0
 ipykernel==6.15.1
 ipython==8.4.0
-ipython-genutils==0.2.0
+# ipython-genutils==0.2.0
 jedi==0.18.1
 Jinja2==3.1.2
-json5==0.9.8
+# json5==0.9.8
 jsonschema==4.7.2
-jupyter-client==7.3.4
-jupyter-core==4.11.1
-jupyter-server==1.18.1
+# jupyter-client==7.3.4
+# jupyter-core==4.11.1
+# jupyter-server==1.18.1
 jupyter-server-mathjax==0.2.5
 jupyter-server-proxy==3.2.1
 jupyterlab==3.4.3
 jupyterlab-git==0.37.1
-jupyterlab-pygments==0.2.2
-jupyterlab-server==2.15.0
+# jupyterlab-pygments==0.2.2
+# jupyterlab-server==2.15.0
 kiwisolver==1.4.3
 locket==1.0.0
 MarkupSafe==2.1.1
 matplotlib==3.5.2
 matplotlib-inline==0.1.3
 mistune==0.8.4
-MITgcmutils==0.1.2
-msgpack==1.0.4
+# MITgcmutils==0.1.2
+# msgpack==1.0.4
 multidict==6.0.2
 nbclassic==0.4.3
 nbclient==0.6.6
@@ -85,7 +85,7 @@ netCDF4==1.6.0
 notebook-shim==0.1.0
 numcodecs==0.10.0
 numpy==1.23.1
--e git+ssh://git@github.com/fraserwg/okapy.git@69350347e38e5b36cf5ef1da57bd2383ac5d1c03#egg=okapy
+# -e git+ssh://git@github.com/fraserwg/okapy.git@69350347e38e5b36cf5ef1da57bd2383ac5d1c03#egg=okapy
 packaging==21.3
 pandas==1.4.3
 pandocfilters==1.5.0
@@ -94,12 +94,12 @@ partd==1.2.0
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.2.0
-prometheus-client==0.14.1
+# prometheus-client==0.14.1
 prompt-toolkit==3.0.30
 psutil==5.9.1
 ptyprocess==0.7.0
-pure-eval==0.2.2
--e git+ssh://git@github.com/fraserwg/pvcalc.git@34dd84e5bc85d76407d5bfb262b664cbb8507458#egg=pvcalc
+# pure-eval==0.2.2
+# -e git+ssh://git@github.com/fraserwg/pvcalc.git@34dd84e5bc85d76407d5bfb262b664cbb8507458#egg=pvcalc
 pycparser==2.21
 Pygments==2.12.0
 pyparsing==3.0.9
@@ -117,11 +117,11 @@ Send2Trash==1.8.0
 Shapely==1.8.4
 simpervisor==0.4
 six==1.16.0
-smmap==5.0.0
+# smmap==5.0.0
 sniffio==1.2.0
 sortedcontainers==2.4.0
 soupsieve==2.3.2.post1
-stack-data==0.3.0
+# stack-data==0.3.0
 tblib==1.7.0
 terminado==0.15.0
 tinycss2==1.1.1
