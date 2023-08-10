@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/512200960.svg)](https://zenodo.org/badge/latestdoi/512200960)
 # irminger-proj
 
 ## Licence
