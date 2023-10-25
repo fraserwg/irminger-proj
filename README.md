@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/512200960.svg)](https://zenodo.org/badge/latestdoi/512200960)
 # irminger-proj
 
 ## Licence
@@ -38,3 +39,8 @@ This folder has scripts for post processing the data. It contains the following 
 Goldsworth, Fraser William. 2022. ‘Symmetric Instability in the Atlantic Meridional Overturning Circulation’. Oxford: University of Oxford. https://doi.org/10.5287/ora-xogpmrvzd.
 
 Goldsworth, F.W., Johnson, H.L., Marshall, D.P., Le Bras, I.A. 2023. ‘Saturation of destratifying and restratifying instabilities during down front wind events: a case study in the Irminger Sea’. Submitted: JGR Oceans.
+
+Goldsworth, Fraser. 2023. ‘Fraserwg/Irminger-Proj: V1.1’. Zenodo. https://doi.org/10.5281/zenodo.8233578.
+
+Goldsworth, F.W., I.A. Le Bras, H.L. Johnson, and D.P. Marshall. 2023. ‘Data for “Saturation of Destratifying and Restratifying Instabilities during down Front Wind Events: A Case Study in the Irminger Sea”’. Zenodo. https://doi.org/10.5281/zenodo.8232682.
+
